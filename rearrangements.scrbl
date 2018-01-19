@@ -4,11 +4,12 @@
   scribble/core
   scribble/eval
   racket
-  scribble/html-properties
   "rearrangements.rkt"
-  (for-label "rearrangements.rkt"
-             racket (only-in typed/racket Setof Exact-Nonnegative-Integer Sequenceof))
+  (for-label "rearrangements.rkt" racket)
   (for-syntax racket))
+
+make-exact-nonnegative-integer->rearrangement
+ make-rearrangement->exact-nonnegative-integer
 
 @title[#:version ""]{Rearrangements}
 @author{Jacob J. A. Koot}
@@ -31,17 +32,17 @@ number of rearrangements is:
 
 With equivalence relation eq? list (a b c) has 6 rearrangements:
 
-(a b c)
-(a c b)
-(b c a)
-(b a c)
-(c a b)
+(a b c)@(linebreak)
+(a c b)@(linebreak)
+(b c a)@(linebreak)
+(b a c)@(linebreak)
+(c a b)@(linebreak)
 (c b a)
 
 With the same equivalence relation list (a b b) has 3 rearrangements:
 
-(a a b)
-(a b a)
+(a a b)@(linebreak)
+(a b a)@(linebreak)
 (b a a)
 
 The number of distinct rearrangements can be very large. For example a deck of 52 distinct playing
@@ -59,40 +60,34 @@ If the list is not empty, take all its rotations.
 For every rotation R, cons (car R) to every rearrangement of (cdr R).
 A list of n distinct elements has n rotations.
 A list is a rotation of itself. Let this be R0.
-Rotation Rn+1 can be found from rotation Rn as (append (cdr Rn) (list (car Rn))).
+Rotation Rn+1 can be found from rotation Rn as
+(append (cdr Rn) (list (car Rn))).
 
-It is not necessary to take true rotations. The first element must be in place, but the cdr may have
-another order. These will be called pseudorotations. If there are n distinct elements, each
+It is not necessary to take true rotations. The first element must be in place,
+but the cdr may have another order.
+These will be called pseudorotations. If there are n distinct elements, each
 collection of n rearrangements will do provided that they all differ for the first element.
 
-A proc produced by make-natural->rearrangement does not compute all pseudorotations or 
-rearrangements. If the index K is less than the number of rearrangements of the cdr of a rotation,
+A procedure produced by @racket[make-exact-nonnegative-integer->rearrangement]
+does not compute all pseudorotations or rearrangements.
+If index K is less than the number of rearrangements of the cdr of a rotation,
 the car of that rotation is consed to the K-th rearrangement of the cdr. If K is greater, then the
 next rotation is formed and K is decreased by the number of rearrangements of the cdr of the skipped
 rotation.
 
-In the following a natural number is an exact nonnegative integer number.
+@defproc[
+(make-exact-nonnegative-integer->rearrangement (L list?) (EQ? (-> any/c any/c any/c) equal?))
+(-> exact-nonnegative-integer? list?)]{
+Procedure @racket[make-exact-nonnegative-integer->rearrangement]
+takes a list @racket[L] and returns a procedure.
+Let N be the number of distinct rearrangements of @racket[L].
+The returned procedure takes an index K less than N
+and returns the K@superscript{th} distinct rearrangement of @racket[L].}
 
-====================================================================================================
-Proc: ((make-natural->rearrangement L (EQ? equal?)) K) -> R
-L   : list of E
-EQ? : (-> E E boolean?) : equivalence relation on the elements of L
-E   : any element of L
-K   : natural number
-R   : rearrangement of L
-
-Proc make-natural->rearrangement takes a list L and returns a proc.
-Let N be the number of distinct rearrangements of L.
-The returned proc takes an index K less than N and returns the K-th distinct rearrangement of L. |#
-
-
-#|==================================================================================================
-Proc: ((make-rearrangement->natural L (EQ? equal?)) R) -> K
-L : list
-K : natural number
-R : rearrangement of L
-
-Proc make-rearrangement->natural produces the inverse of the proc returned by proc
-make-natural->rearrangement. Mark the similarity between make-natural->rearrangement and
-make-rearrangement->natural. |#
+@defproc[
+(make-rearrangement->exact-nonnegative-integer 
+(L (listof any/c)) (EQ? (-> any/c any/c any/c) equal?))
+(-> exact-nonnegative-integer? (listof any/c))]{
+Procedure @racket[make-rearrangement->exact-nonnegative-integer] produces the inverse
+of the procedure returned by procedure @racket[make-exact-nonnegative-integer->rearrangement].}
 
