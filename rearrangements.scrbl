@@ -8,9 +8,6 @@
   (for-label "rearrangements.rkt" racket)
   (for-syntax racket))
 
-make-exact-nonnegative-integer->rearrangement
- make-rearrangement->exact-nonnegative-integer
-
 @title[#:version ""]{Rearrangements}
 @author{Jacob J. A. Koot}
 @(defmodule "rearrangements.rkt" #:packages ())
