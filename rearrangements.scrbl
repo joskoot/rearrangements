@@ -79,7 +79,16 @@ Procedure @racket[make-exact-nonnegative-integer->rearrangement]
 takes a list @racket[L] and returns a procedure.
 Let N be the number of distinct rearrangements of @racket[L].
 The returned procedure takes an index K less than N
-and returns the K@superscript{th} distinct rearrangement of @racket[L].}
+and returns the K@superscript{th} distinct rearrangement of @racket[L].} Example:
+
+@interaction[
+(require "rearrangements.rkt" racket)
+(define x (make-exact-nonnegative-integer->rearrangement '(a b c)))
+(for/list ((k (in-range 6))) (x k))
+(define y (make-exact-nonnegative-integer->rearrangement (range 1000)))
+(for ((y (in-list (y (expt 10 2450)))) (k (in-cycle (range 20))))
+ (when (= k 0) (newline))
+ (printf "~a " (~s #:min-width 3 #:align 'right y)))]
 
 @defproc[
 (make-rearrangement->exact-nonnegative-integer 
