@@ -84,13 +84,13 @@ The produced Rs are guaranteed to differ according to this relation.
 (-> exact-nonnegative-integer? list?))
  (((make-N->R (L list?) (EQ? (-> any/c any/c any/c) equal?))
    (K exact-nonnegative-integer?)) list?))]{
-@racket[EQ?] must be an equivalence relation.
+@racket[EQ?] must be an equivalence relation for the elements of @racket[L].
 Procedure @racket[make-N->R]
 takes a list @racket[L] and returns a procedure.
 Let N be the number of distinct Rs of @racket[L].
 The returned procedure takes an index @racket[K] less than
 the number of distinct Rs of @racket[L].
-It returns the @racket[K]@superscript{th} distinct R of @racket[L].
+It returns the @racket[K]@superscript{th} R of @racket[L].
 Results are unpredictable when @racket[K] is equal to or greater than
 the number of distinct Rs of @racket[L].}
 
@@ -121,7 +121,7 @@ the number of distinct Rs of @racket[L].}
 (-> list? exact-nonnegative-integer?))
  (((make-R->N (L list?) (EQ? (-> any/c any/c any/c) equal?)) (lst list?))
   exact-nonnegative-integer?))]{
-@racket[EQ?] must be an equivalence relation.
+@racket[EQ?] must be an equivalence relation for the elements of @racket[L].
 Procedure @racket[make-R->N] produces the inverse
 of the procedure returned by procedure @racket[make-N->R].
 Results are unpredictable if @racket[lst] is not an R of @racket[L].
@@ -163,7 +163,7 @@ the procedure returned by @racket[make-N->R].}
 
 @defproc[(nr-of-Rs (L list?) (EQ? (-> any/c any/c any/c) equal?))
          exact-positive-integer?]{
-@racket[EQ?] must be an equivalence relation.
+@racket[EQ?] must be an equivalence relation for the elements of @racket[L].
 @racket[nr-of-Rs] returns the number of distinct Rs of @racket[L].}
 Examples:
 
@@ -176,5 +176,12 @@ Examples:
 (nr-of-Rs (list (list 'a) (list 'a) (list 'a)) eq?)
 (nr-of-Rs (list (list 'a) (list 'a) (list 'a)) equal?)]
 
-@defproc[(R? (x list?) (y list?)) boolean?]{
-Retunrs #t iff @racket[x] and @racket[y] are Rs of each other.}
+@defproc[(R? (x list?) (y list?) (EQ? (-> any/c any/c any/c) equal?)) boolean?]{
+Returns @racket[#t] iff @racket[x] and @racket[y] are Rs of each other
+according to equivalence relation @racket[EQ?].} Examples:
+
+@interaction[
+(require "rearrangements.rkt" racket)
+(R? '(a b c) '(c b a))
+(R? '(a b c) '(d e f))
+(R? '(a b c) '(d e f) (λ (x y) #t))]
