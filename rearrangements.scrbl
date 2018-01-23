@@ -96,6 +96,8 @@ the number of distinct Rs of @racket[L].}
 
 @interaction[
 (require "rearrangements.rkt" racket)
+(require (only-in math/number-theory factorial))
+(require (only-in math/base random-natural))
 (code:line)
 (define x (make-N->R '(a b c)))
 (for/list ((k (in-range 6))) (x k))
@@ -103,10 +105,16 @@ the number of distinct Rs of @racket[L].}
 (define y (make-N->R '(a a b)))
 (for/list ((k (in-range 3))) (y k))
 (code:line)
-(define z (make-N->R (range 1000)))
-(for ((z (in-list (z (expt 10 2500)))) (k (in-cycle (range 20))))
+(define n 1000)
+(define m (random-natural (factorial n)))
+(~r #:notation 'exponential m)
+(define lst (range n))
+(define z (make-N->R lst))
+(define r (z m))
+(equal? (sort r <) lst)
+(for ((e (in-list r)) (k (in-cycle (range 20))))
  (when (= k 0) (newline))
- (printf "~a " (~s #:min-width 3 #:align 'right z)))]
+ (printf "~a " (~s #:min-width 3 #:align 'right e)))]
 
 @defproc*[
 (((make-R->N (L list?) (EQ? (-> any/c any/c any/c) equal?))
