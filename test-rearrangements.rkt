@@ -52,4 +52,9 @@
  (sort-Ls (for/list ((k 3)) ((make-N->R '(a a b)) k)))
  (sort-Ls '((b a a) (a b a) (a a b))))
 
+(define x (make-N->R '(a b c)))
+(define y (for/list ((k (in-range 6))) (x k)))
+(unless (for/and ((y (in-list y))) (R? y '(a b c)))
+ (error 'R? "fails"))
+
 "All is well"

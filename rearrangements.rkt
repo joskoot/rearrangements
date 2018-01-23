@@ -5,7 +5,8 @@
 (provide
  make-N->R
  make-R->N
- nr-of-Rs)
+ nr-of-Rs
+ R?)
 
 (define (make-N->R L (EQ? equal?))
  (let ((N (nr-of-Rs L EQ?)))
@@ -43,3 +44,17 @@
 (define (count-occurrences E L (EQ? equal?))
  (define (eq x) (EQ? x E))
  (count eq L))
+
+(define (R? a b (EQ? equal?))
+ (and (= (length a) (length b))
+  (let loop1 ((a a) (b b))
+   (cond
+    ((null? a))
+    (else
+     (define e (car a))
+     (let loop2 ((b b) (r '()))
+      (cond
+       ((null? b) #f)
+       ((EQ? e (car b)) (loop1 (cdr a) (append (cdr b) r)))
+       (else (loop2 (cdr b) (cons (car b) r))))))))))
+

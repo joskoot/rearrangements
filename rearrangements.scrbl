@@ -168,3 +168,5 @@ Examples:
 (nr-of-Rs (list (list 'a) (list 'a) (list 'a)) eq?)
 (nr-of-Rs (list (list 'a) (list 'a) (list 'a)) equal?)]
 
+@defproc[(R? (x list?) (y list?)) boolean?]{
+Retunrs #t iff @racket[x] and @racket[y] are Rs of each other.}
