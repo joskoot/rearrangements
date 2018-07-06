@@ -53,36 +53,35 @@ K<N, where N is the number of distinct rearrangements.
 
 @section{Method}
 
-Let `R' be short for `rearrangement'.
+First assume that all elements are distinct. Then all rearrangements can be found as follows:
 
-First assume that all elements are distinct. Then all Rs can be found as follows:
-
-If the list is empty, it has one R, namely itself.
+If the list is empty, it has one rearrangement, namely itself.
 If the list is not empty, take all its rotations.
-For every rotation @tt{r}, cons @tt{(car r)} to every R of @tt{(cdr r)}.
+For every rotation @tt{r}, cons @tt{(car r)} to every rearrangement of @tt{(cdr r)}.
 A list of n distinct elements has n rotations.
 A list is a rotation of itself. Let this be @tt{r@↓{0}}.
-Rotation @tt{r@↓{n+1}} can be found from rotation @tt{r@↓{n}} as
-@tt{(append (cdr r@↓{n}) (list (car r@↓{n}}))).
+Rotation @tt{r@↓{k+1}} can be found from rotation @tt{r@↓{k}} as
+@tt{(append (cdr r@↓{k}) (list (car r@↓{k}}))).
 
 It is not necessary to take true rotations. The first element must be in place,
 but the cdr may have another order.
 These will be called pseudorotations. If there are n distinct elements, each
-collection of n Rs will do provided that they all differ for the first element.
-This does affect the order of the Rs, of course.
+collection of n rearrangements will do provided that they all differ for the first element.
+This does affect the order of the rearrangements, of course.
 
 A procedure produced by @racket[make-N->R]
-does not compute all pseudorotations or Rs.
-If index K is less than the number of Rs of the cdr of a rotation,
-the car of that rotation is consed to the K@↑{th} R of the cdr. If K is greater, then the
-next rotation is formed and K is decreased by the number of Rs of the cdr of the skipped
+does not compute all pseudorotations or rearrangements.
+If index K is less than the number of rearrangements of the cdr of a rotation,
+the car of that rotation is consed to the K@↑{th} rearrangement of the cdr. If K is greater,
+then the next rotation is formed and K is decreased
+by the number of rearrangements of the cdr of the skipped
 rotation.
 
 Procedures @racket[make-N->R] and @racket[make-R->N]
 accept an equivalence relation (such as @racket[equal?] and @racket[eq?],
 but any procedure defining an equivalence on the set of elements of the list being rearranged
 will do).
-The produced Rs are guaranteed to differ according to this relation. 
+The produced rearrangements are guaranteed to differ according to this relation. 
 
 @defproc*[
 (((make-N->R (L list?) (EQ? (-> any/c any/c any/c) equal?))
@@ -90,15 +89,14 @@ The produced Rs are guaranteed to differ according to this relation.
  (((make-N->R (L list?) (EQ? (-> any/c any/c any/c) equal?))
    (K exact-nonnegative-integer?)) list?))]{
 @racket[EQ?] must be an equivalence relation for the elements of @racket[L],
-any value other than @racket[#f] being interpreted as true.
+every value returned by @racket[EQ? ] other than @racket[#f] being interpreted as true.
 Procedure @racket[make-N->R]
 takes a list @racket[L] and returns a procedure.
-Let N be the number of distinct Rs of @racket[L].
 The returned procedure takes an index @racket[K] less than
-the number of distinct Rs of @racket[L].
-It returns the @racket[K]@↑{th} R of @racket[L].
+the number of distinct rearrangements of @racket[L].
+It returns the @racket[K]@↑{th} rearrangement of @racket[L].
 Results are unpredictable when @racket[K] is equal to or greater than
-the number of distinct Rs of @racket[L].}
+the number of distinct rearrangements of @racket[L].}
 
 @interaction[
 (require "rearrangements.rkt" racket)
@@ -109,7 +107,7 @@ the number of distinct Rs of @racket[L].}
 (define y (make-N->R '(a a b)))
 (for/list ((k (in-range 3))) (y k))]
 
-An example with a list of 1000 elements:
+An example with a list of 1000 elements, all distinct:
 
 @interaction[
 (require racket "rearrangements.rkt")
@@ -118,15 +116,22 @@ An example with a list of 1000 elements:
 (code:comment " ")
 (define n 1000)
 (random-seed 0)
-(define m (random-natural (factorial n)))
-(~r #:notation 'exponential m)
+(define m (factorial n))
+(define k (random-natural m))
+(list (~r #:notation 'exponential m) (~r #:notation 'exponential k))
 (define lst (range n))
-(define z (make-N->R lst))
-(define r (z m))
+(define z (make-N->R lst =))
+(define r (time (z k)))
+(code:comment #,(list "This is significantly slower than procedure " @racket[shuffle] "."))
+(void (time (shuffle lst)))
+(code:comment #,(list "But " @racket[shuffle] " does not guarantee distinct results"))
+(code:comment "when called repeatedly:")
+(random-seed 0)
+(check-duplicates (for/list ((k (in-range 6))) (shuffle '(a b c))))
 (code:comment " ")
 (equal? (sort r <) lst)
-(for ((e (in-list r)) (k (in-cycle (range 20))))
- (when (= k 0) (newline))
+(for ((e (in-list r)) (i (in-cycle (range 20))))
+ (when (= i 0) (newline))
  (printf "~a " (~s #:min-width 3 #:align 'right e)))]
 
 @defproc*[
@@ -135,10 +140,10 @@ An example with a list of 1000 elements:
  (((make-R->N (L list?) (EQ? (-> any/c any/c any/c) equal?)) (lst list?))
   exact-nonnegative-integer?))]{
 @racket[EQ?] must be an equivalence relation for the elements of @racket[L],
-any value other than @racket[#f] being interpreted as true.
+every value returned by @racket[EQ? ] other than @racket[#f] being interpreted as true.
 Procedure @racket[make-R->N] produces the inverse
 of the procedure returned by procedure @racket[make-N->R].
-Results are unpredictable if @racket[lst] is not an R of @racket[L].
+Results are unpredictable if @racket[lst] is not an rearrangement of @racket[L].
 Let's check that @racket[make-R->N] produces the inverse of
 the procedure returned by @racket[make-N->R].}
 
@@ -178,7 +183,7 @@ the procedure returned by @racket[make-N->R].}
 @defproc[(nr-of-Rs (L list?) (EQ? (-> any/c any/c any/c) equal?))
          exact-positive-integer?]{
 @racket[EQ?] must be an equivalence relation for the elements of @racket[L].
-@racket[nr-of-Rs] returns the number of distinct Rs of @racket[L].}
+@racket[nr-of-Rs] returns the number of distinct rearrangements of @racket[L].}
 Examples:
 
 @interaction[
@@ -191,7 +196,7 @@ Examples:
 (nr-of-Rs (list (list 'a) (list 'a) (list 'a)) equal?)]
 
 @defproc[(R? (x list?) (y list?) (EQ? (-> any/c any/c any/c) equal?)) boolean?]{
-Returns @racket[#t] iff @racket[x] and @racket[y] are Rs of each other
+Returns @racket[#t] iff @racket[x] and @racket[y] are rearrangements of each other
 according to equivalence relation @racket[EQ?].} Examples:
 
 @interaction[
