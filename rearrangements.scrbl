@@ -10,7 +10,7 @@
 
 @title[#:version ""]{Rearrangements}
 @author{Jacob J. A. Koot}
-@(defmodule "rearrangements/rearrangements.rkt" #:packages ())
+@(defmodule "rearrangements/rearrangements" #:packages ())
 @(define ↓ subscript)
 @(define ↑ superscript)
 
