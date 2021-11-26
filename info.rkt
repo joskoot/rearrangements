@@ -3,4 +3,4 @@
 (define name "planet-fmt")
 (define blurb (list "rearrangements"))
 (define primary-file "rearrangements.rkt")
-(define categories (list 'rearrangements))
+(define categories (list 'rearrangement 'permutation))
