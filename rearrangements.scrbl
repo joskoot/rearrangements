@@ -10,6 +10,7 @@
 
 @title[#:version ""]{Rearrangements}
 @author{Jacob J. A. Koot}
+@;@(defmodule "rearrangements.rkt" #:packages ())
 @(defmodule rearrangements/rearrangements #:packages ())
 @(define ↓ subscript)
 @(define ↑ superscript)
@@ -38,7 +39,7 @@ With equivalence relation @racket[eq?] list @tt{(a b c)} has 6 rearrangements:
 (c a b)@(linebreak)
 (c b a)}
 
-With the same equivalence relation list @tt{(a b b)} has 3 rearrangements:
+With the same equivalence relation list @tt{(a a b)} has 3 rearrangements:
 
 @tt{(a a b)@(linebreak)
 (a b a)@(linebreak)
@@ -158,7 +159,7 @@ the procedure returned by @racket[make-N->R].}
  (define F (make-N->R L EQ?))
  (define G (make-R->N L EQ?))
  (define N (nr-of-Rs L EQ?))
- ; Check that G is the inverse of F.
+(code:comment "Check that G and F are inverses of each other.")
  (and
   (for/and ((K (in-range 0 N))) (test-equal K (G (F K))))
   (for/and ((K (in-range 0 N))) (define L (F K)) (test-equal L (F (G L))))))
